@@ -3,6 +3,7 @@ package me.bence056.enigma.extras;
 import jdk.nashorn.internal.parser.JSONParser;
 import jdk.nashorn.internal.runtime.JSONFunctions;
 import me.bence056.enigma.interfaces.ICommandBase;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.io.IOException;
@@ -91,12 +92,19 @@ public class RotorGenerator implements ICommandBase {
             if(args[0].equals("-save")) {
                 System.out.println("Saving to file...");
                 FileWriter file;
-                JSONObject obj = new JSONObject();
-                obj.putAll(ROTORS.get(0));
+                JSONObject obj;
+                JSONObject objWrapper = new JSONObject();
+                JSONArray array = new JSONArray();
+                for(int c=0; c<5; c++) {
+                    obj = new JSONObject();
+                    obj.putAll(ROTORS.get(c));
+                    array.add(obj);
+                }
+                objWrapper.put("rotors", array);
 
                 try {
                     file = new FileWriter("./data.json");
-                    file.write(obj.toJSONString());
+                    file.write(objWrapper.toJSONString());
                     file.flush();
                     file.close();
 
