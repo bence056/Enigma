@@ -1,5 +1,7 @@
 package me.bence056.enigma.components;
 
+import me.bence056.enigma.extras.RotorGenerator;
+
 import java.util.*;
 
 public class RotorManager {
@@ -32,11 +34,16 @@ public class RotorManager {
         SELECTED_ROTORS.add(SecondRotor);
         SELECTED_ROTORS.add(ThirdRotor);
 
-        System.out.println(FirstRotor);
-        System.out.println(SecondRotor);
-        System.out.println(ThirdRotor);
-
         createInvertedRotors();
+
+        //System.out.println(FirstRotor);
+        //System.out.println(FirstRotorInverted);
+        //System.out.println(SecondRotor);
+        //System.out.println(SecondRotorInverted);
+        //System.out.println(ThirdRotor);
+        //System.out.println(ThirdRotorInverted);
+
+
 
     }
 
@@ -57,14 +64,17 @@ public class RotorManager {
                 }
             }
         }
-
+        createInvertedRotors();
+        //System.out.println(SELECTED_ROTORS.get(0));
+        //System.out.println(FirstRotorInverted);
+        //System.out.println(SELECTED_ROTORS.get(1));
+        //System.out.println(SecondRotorInverted);
+        //System.out.println(SELECTED_ROTORS.get(2));
+        //System.out.println(ThirdRotorInverted);
     }
 
     private static void AdvanceRotor(Map<Integer, Integer> RotorToAdvance) {
 
-
-
-        System.out.println("\n\n");
 
         Integer[] advanced = new Integer[26];
 
@@ -86,6 +96,20 @@ public class RotorManager {
         }
 
         createInvertedRotors();
+
+        List<Integer> enabled_rots = RotorGenerator.GetEnabledRotors();
+
+        //System.out.println(enabled_rots.get(1));
+
+        //RotorGenerator.ROTORS.get(enabled_rots.get(0)).clear();
+        //RotorGenerator.ROTORS.get(enabled_rots.get(1)).clear();
+        //RotorGenerator.ROTORS.get(enabled_rots.get(2)).clear();
+
+            //System.out.println(RotorGenerator.ROTORS.get(enabled_rots.get(0)));
+
+        //RotorGenerator.ROTORS.get(enabled_rots.get(0)).putAll(SELECTED_ROTORS.get(0));
+        //RotorGenerator.ROTORS.get(enabled_rots.get(1)).putAll(SELECTED_ROTORS.get(1));
+        //RotorGenerator.ROTORS.get(enabled_rots.get(2)).putAll(SELECTED_ROTORS.get(2));
 
     }
 
