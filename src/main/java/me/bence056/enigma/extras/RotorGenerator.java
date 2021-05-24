@@ -1,6 +1,5 @@
 package me.bence056.enigma.extras;
 
-import jdk.nashorn.internal.runtime.JSONFunctions;
 import me.bence056.enigma.interfaces.ICommandBase;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
