@@ -33,6 +33,13 @@ public class Encoder implements ICommandBase {
     public void encode() {
         if(args.length>0) {
 
+            System.out.print("Loading Configurations...");
+            while(RotorGenerator.PLUGBOARD.isEmpty()) {
+                RotorGenerator.LoadPlugboard();
+                System.out.print(".");
+            }
+            System.out.println(".");
+
             JSONObject dataInput = null;
             FileReader reader;
             JSONParser parser = new JSONParser();
@@ -156,17 +163,21 @@ public class Encoder implements ICommandBase {
                                                         RotorManager.SELECTED_ROTORS.get(0).get(charID))))));*/
 
         //RotorManager.AdvanceRotors();
-
-        int retVal = RotorManager.SELECTED_ROTORS_INVERTED.get(0).get(
-                        RotorManager.SELECTED_ROTORS_INVERTED.get(1).get(
-                                RotorManager.SELECTED_ROTORS_INVERTED.get(2).get(
-                                        RotorGenerator.REVERSER.get(
-                                                RotorManager.SELECTED_ROTORS.get(2).get(
-                                                        RotorManager.SELECTED_ROTORS.get(1).get(
-                                                                RotorManager.SELECTED_ROTORS.get(0).get(charID))))))) ;
+        System.out.println(RotorGenerator.PLUGBOARD);
+        int retVal = feedThroughPlugboard(RotorManager.SELECTED_ROTORS_INVERTED.get(0).get(
+                                                    RotorManager.SELECTED_ROTORS_INVERTED.get(1).get(
+                                                        RotorManager.SELECTED_ROTORS_INVERTED.get(2).get(
+                                                            RotorGenerator.REVERSER.get(
+                                                                RotorManager.SELECTED_ROTORS.get(2).get(
+                                                                    RotorManager.SELECTED_ROTORS.get(1).get(
+                                                                            RotorManager.SELECTED_ROTORS.get(0).get(feedThroughPlugboard(charID))))))))) ;
 
         return retVal;
 
+    }
+
+    private int feedThroughPlugboard(int input) {
+        return RotorGenerator.PLUGBOARD.getOrDefault(input, input);
     }
 
 }

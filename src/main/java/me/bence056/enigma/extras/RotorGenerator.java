@@ -17,6 +17,7 @@ public class RotorGenerator implements ICommandBase {
 
     public static List<Map<Integer, Integer>> ROTORS = new ArrayList<>();
     public static Map<Integer, Integer> REVERSER = new HashMap<>();
+    public static Map<Integer, Integer> PLUGBOARD = new HashMap<>();
 
     public static boolean[] ROTOR_STATES = new boolean[5];
 
@@ -79,8 +80,10 @@ public class RotorGenerator implements ICommandBase {
 
         List<Integer> startHalf = new ArrayList<>();
         List<Integer> endHalf = new ArrayList<>();
-        List<Integer> startConnections;
-        List<Integer> endConnections;
+        //List<Integer> startConnections;
+        List<Integer> startConnections = new ArrayList<>();
+        //List<Integer> endConnections;
+        List<Integer> endConnections = new ArrayList<>();
 
 
 
@@ -105,8 +108,14 @@ public class RotorGenerator implements ICommandBase {
         }
 
         //Combining two reverser half-pairs:
-        (startConnections = startHalf).addAll(endHalf);
-        (endConnections = endHalf).addAll(startHalf);
+        //(startConnections = startHalf).addAll(endHalf);
+        //(endConnections = endHalf).addAll(startHalf);
+
+        startConnections.addAll(startHalf);
+        startConnections.addAll(endHalf);
+        endConnections.addAll(endHalf);
+        endConnections.addAll(startHalf);
+
         //-----------------------------------
 
         for(int i=0; i<26; i++) {
@@ -118,6 +127,8 @@ public class RotorGenerator implements ICommandBase {
         ROTOR_STATES[2] = true;
         ROTOR_STATES[3] = false;
         ROTOR_STATES[4] = false;
+
+        GenerateNewPlugboardComposition();
 
     }
 
@@ -142,6 +153,10 @@ public class RotorGenerator implements ICommandBase {
         System.out.println("");
 
         //----------------------
+
+        System.out.println("PLUGBOARD:");
+        System.out.println(PLUGBOARD);
+        System.out.println("");
 
         if(args.length!=0) {
             if(args[0].equals("-save")) {
@@ -168,6 +183,7 @@ public class RotorGenerator implements ICommandBase {
         objWrapper.put("rotors", array);
         objWrapper.put("reverser", REVERSER);
         objWrapper.put("rotor_states", rotStates);
+        objWrapper.put("plugboard", PLUGBOARD);
 
         try {
             file = new FileWriter("./data.json");
@@ -178,6 +194,56 @@ public class RotorGenerator implements ICommandBase {
         }catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void LoadPlugboard() {
+        JSONObject dataInput = null;
+        FileReader reader;
+        org.json.simple.parser.JSONParser parser = new JSONParser();
+
+        try {
+            reader = new FileReader("./data.json");
+            try {
+                Object obj = parser.parse(reader);
+
+                dataInput = (JSONObject) obj;
+
+                if (dataInput.isEmpty()) {
+                    dataInput = null;
+                }
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            System.out.println("Data file does not exist!");
+            dataInput = null;
+            return;
+        }
+
+        if (dataInput == null) {
+            System.out.println("Data not found");
+        } else {
+
+            Map<Integer, Integer> currentRotorMap = new HashMap<>();
+            JSONObject plugs = (JSONObject) dataInput.get("plugboard");
+            for(int c=0; c<26; c++) {
+
+
+                if(plugs.containsKey(String.valueOf(c+1))) {
+                    currentRotorMap.put(c+1, ((Number) plugs.get(String.valueOf(c+1))).intValue());
+                }
+                //System.out.println(currentRotorMap);
+                //System.out.println(currentRotor.get(String.valueOf(c+1)));
+            }
+
+            PLUGBOARD.clear();
+            PLUGBOARD.putAll(currentRotorMap);
+            //System.out.println(PLUGBOARD);
+        }
+
+
+
     }
 
     public static List<Integer> GetEnabledRotors() {
@@ -226,6 +292,51 @@ public class RotorGenerator implements ICommandBase {
 
         return enabled_rotor_numbers;
 
+    }
+
+    private static void GenerateNewPlugboardComposition() {
+
+        List<Integer> startHalf = new ArrayList<>();
+        List<Integer> endHalf = new ArrayList<>();
+        List<Integer> startConnections = new ArrayList<>();
+        List<Integer> endConnections = new ArrayList<>();
+
+        for(int i=0; i<20; i++) {
+
+            Random rand = new Random();
+
+            boolean bCanAdvance = false;
+
+
+            while(!bCanAdvance) {
+
+                int current = rand.nextInt(26)+1;
+
+                if(!startHalf.contains(current) && !endHalf.contains(current)) {
+
+                    if(i<10) {
+                        startHalf.add(current);
+                    }else {
+                        endHalf.add(current);
+                    }
+
+                    bCanAdvance = true;
+                }
+
+
+            }
+
+        }
+
+        startConnections.addAll(startHalf);
+        startConnections.addAll(endHalf);
+        endConnections.addAll(endHalf);
+        endConnections.addAll(startHalf);
+
+        PLUGBOARD.clear();
+        for(int i=0; i<20; i++) {
+            PLUGBOARD.put(startConnections.get(i), endConnections.get(i));
+        }
     }
 
 }
