@@ -5,16 +5,28 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.regex.Pattern;
 
 public class SaveInitital implements ICommandBase {
     @Override
     public void executeCommand(String[] args) {
 
 
-        System.out.println("Copying current settings to data_initial.json");
+        String fileName = "progsave_";
+        LocalDateTime dt = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+        fileName += formatter.format(dt) + ".json";
+
+        System.out.println("Copying current settings to saved/" + fileName);
 
         FileWriter writer;
         FileReader reader;
@@ -28,7 +40,13 @@ public class SaveInitital implements ICommandBase {
 
                 JSONObject jsonObject = (JSONObject) obj;
 
-                writer = new FileWriter("./data_initial.json");
+                String dirPath = "./saved";
+                File f = new File(dirPath);
+                if(!f.exists()) {
+                    f.mkdir();
+                }
+
+                writer = new FileWriter("saved/" + fileName);
 
                 writer.write(jsonObject.toJSONString());
                 writer.flush();
@@ -39,7 +57,7 @@ public class SaveInitital implements ICommandBase {
             }
 
         }catch (IOException e) {
-            System.out.println("File not found!");
+            System.out.println("An Error occured.");
             return;
         }
 
